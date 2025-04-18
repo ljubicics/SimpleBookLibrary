@@ -20,6 +20,11 @@ android {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        javaLauncher.set(
+            javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(21))
+            }
+        )
     }
 
     buildTypes {
