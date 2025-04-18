@@ -4,73 +4,90 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.PorterDuffXfermode
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
-import android.util.Log
-import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+
+private const val READ_MODE = "r"
+private const val BITMAP_X_START_POINT = 0f
+private const val BITMAP_Y_START_POINT = 0f
 
 class PdfBitmapConverter(
     private val context: Context
 ) {
-    var renderer: PdfRenderer? = null
+    private var renderer: PdfRenderer? = null
 
-    suspend fun pdfToBitmaps(contentUri: Uri, screenDensity: Int): List<Bitmap> {
+    suspend fun pdfToBitmaps(
+        contentUri: Uri,
+        startPage: Int = 0,
+        endPage: Int = 0,
+        isDarkModeActive: Boolean = false
+    ): List<Bitmap> {
         return withContext(Dispatchers.IO) {
             renderer?.close()
 
             context
                 .contentResolver
-                .openFileDescriptor(contentUri, "r")
+                .openFileDescriptor(contentUri, READ_MODE)
                 ?.use { descriptor ->
                     with(PdfRenderer(descriptor)) {
                         renderer = this
 
-                        Log.d("MOJTAG", pageCount.toString())
-                        return@withContext (0 until 5).map { index ->
-                            async {
-                                openPage(index).use { page ->
-                                    val bitmap = Bitmap.createBitmap(
-                                        page.width * 3,
-                                        page.height * 3,
-                                        Bitmap.Config.ARGB_8888
-                                    )
+                        return@withContext (startPage until endPage).map { index ->
+                            openPage(index).use { page ->
+                                val bitmap = createBitmap(page.width * 3, page.height * 3)
 
-                                    val paint = Paint().apply {
-                                        xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
-                                    }
-
-                                    val canvas = Canvas(bitmap).apply {
-                                        drawColor(Color.WHITE)
-                                        drawBitmap(
-                                            bitmap,
-                                            0f,
-                                            0f,
-                                            paint
-                                        )
-                                    }
-
-                                    page.render(
+                                Canvas(bitmap).apply {
+                                    drawColor(Color.WHITE)
+                                    drawBitmap(
                                         bitmap,
-                                        null,
-                                        null,
-                                        PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                                        BITMAP_X_START_POINT,
+                                        BITMAP_Y_START_POINT,
+                                        null
                                     )
+                                }
 
-                                    bitmap
+                                page.render(
+                                    bitmap,
+                                    null,
+                                    null,
+                                    PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                                )
+
+                                if (isDarkModeActive) {
+                                    return@map invertBitmapColors(bitmap)
+                                } else {
+                                    return@map bitmap
                                 }
                             }
-                        }.awaitAll()
+                        }
                     }
                 }
             return@withContext emptyList()
         }
+    }
+
+    private fun invertBitmapColors(bitmap: Bitmap): Bitmap {
+        val invertMatrix = ColorMatrix(
+            floatArrayOf(
+                -1f, 0f, 0f, 0f, 255f,
+                0f, -1f, 0f, 0f, 255f,
+                0f, 0f, -1f, 0f, 255f,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
+
+        val paint = Paint().apply {
+            colorFilter = ColorMatrixColorFilter(invertMatrix)
+        }
+
+        val canvas = Canvas(bitmap)
+        canvas.drawBitmap(bitmap, BITMAP_X_START_POINT, BITMAP_X_START_POINT, paint)
+        return bitmap
     }
 }

@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -48,7 +45,11 @@ fun PdfViewerScreen(
 
     LaunchedEffect(key1 = pdfUri) {
         pdfUri?.let { uri ->
-            renderedPages = pdfBitmapConverter.pdfToBitmaps(uri, configuration.densityDpi)
+            renderedPages = pdfBitmapConverter.pdfToBitmaps(
+                contentUri = uri,
+                startPage = 0,
+                endPage = 10
+            )
         }
     }
 
@@ -64,9 +65,11 @@ fun PdfViewerScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Button(onClick = {
-                choosePdfLauncher.launch("application/pdf")
-            }) {
+            Button(
+                onClick = {
+                    choosePdfLauncher.launch("application/pdf")
+                }
+            ) {
                 Text("Choose PDF")
             }
         }
@@ -76,14 +79,22 @@ fun PdfViewerScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val pagerState = rememberPagerState(pageCount = {
-                renderedPages.size
-            })
+            val pagerState = rememberPagerState(
+                pageCount = {
+                    renderedPages.size
+                }
+            )
             HorizontalPager(
                 state = pagerState,
                 beyondBoundsPageCount = 3,
             ) { page ->
-                PdfPage(page = renderedPages.get(page))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    PdfPage(page = renderedPages.get(page))
+                }
             }
         }
     }
