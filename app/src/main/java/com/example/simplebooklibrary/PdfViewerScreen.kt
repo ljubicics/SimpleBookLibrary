@@ -22,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 
@@ -32,7 +31,6 @@ fun PdfViewerScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
     val pdfBitmapConverter = remember {
         PdfBitmapConverter(context)
     }
