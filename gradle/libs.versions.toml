@@ -10,6 +10,9 @@ junitJupiter = "5.10.0"
 mockk = "1.13.9"
 mockkAndroid = "1.13.9"
 
+#Code quality
+detekt = "1.23.8"
+
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
@@ -48,4 +51,5 @@ splash = { group = "androidx.core", name = "core-splashscreen", version.ref = "s
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
