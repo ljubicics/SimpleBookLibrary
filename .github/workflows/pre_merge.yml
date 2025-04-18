@@ -26,5 +26,6 @@ jobs:
       - name: Build
         run: ./gradlew clean build
 
-      - name: Run tests
-        run: ./gradlew test
+  test:
+    - name: Run tests
+      run: ./gradlew test
