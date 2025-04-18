@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -25,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 
@@ -35,7 +31,6 @@ fun PdfViewerScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
     val pdfBitmapConverter = remember {
         PdfBitmapConverter(context)
     }
@@ -48,7 +43,11 @@ fun PdfViewerScreen(
 
     LaunchedEffect(key1 = pdfUri) {
         pdfUri?.let { uri ->
-            renderedPages = pdfBitmapConverter.pdfToBitmaps(uri, configuration.densityDpi)
+            renderedPages = pdfBitmapConverter.pdfToBitmaps(
+                contentUri = uri,
+                startPage = 0,
+                endPage = 10
+            )
         }
     }
 
@@ -64,9 +63,11 @@ fun PdfViewerScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Button(onClick = {
-                choosePdfLauncher.launch("application/pdf")
-            }) {
+            Button(
+                onClick = {
+                    choosePdfLauncher.launch("application/pdf")
+                }
+            ) {
                 Text("Choose PDF")
             }
         }
@@ -76,14 +77,22 @@ fun PdfViewerScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val pagerState = rememberPagerState(pageCount = {
-                renderedPages.size
-            })
+            val pagerState = rememberPagerState(
+                pageCount = {
+                    renderedPages.size
+                }
+            )
             HorizontalPager(
                 state = pagerState,
                 beyondBoundsPageCount = 3,
             ) { page ->
-                PdfPage(page = renderedPages.get(page))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    PdfPage(page = renderedPages.get(page))
+                }
             }
         }
     }
