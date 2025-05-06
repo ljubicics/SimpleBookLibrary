@@ -21,6 +21,7 @@ class PdfBitmapConverter(
     private val context: Context
 ) {
     private var renderer: PdfRenderer? = null
+    private var bookNumberOfPages: Int = 0
 
     @Suppress("TooGenericExceptionCaught")
     suspend fun pdfToBitmaps(
@@ -29,7 +30,9 @@ class PdfBitmapConverter(
         isDarkModeActive: Boolean = false
     ): List<Bitmap> {
         val startPage = page * 5
-        val endPage = startPage + 5
+
+        var endPage = startPage + 5
+
         return withContext(Dispatchers.IO) {
             renderer?.close()
             context
@@ -38,6 +41,15 @@ class PdfBitmapConverter(
                 ?.use { descriptor ->
                     with(PdfRenderer(descriptor)) {
                         renderer = this
+                        bookNumberOfPages = this.pageCount
+
+                        if (bookNumberOfPages == 0) {
+                            return@withContext emptyList()
+                        }
+
+                        if (endPage > bookNumberOfPages && bookNumberOfPages > 0) {
+                            endPage = bookNumberOfPages
+                        }
 
                         return@withContext (startPage until endPage).map { index ->
                             try {
