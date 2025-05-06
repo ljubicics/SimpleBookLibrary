@@ -17,9 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,13 +43,34 @@ fun PdfViewerScreen(
         mutableStateOf<List<Bitmap>>(emptyList())
     }
 
-    LaunchedEffect(key1 = pdfUri) {
+    var currentPage by remember {
+        mutableIntStateOf(0)
+    }
+
+    val pagerState = rememberPagerState(
+        pageCount = {
+            renderedPages.size
+        }
+    )
+
+    LaunchedEffect(key1 = pdfUri, key2 = currentPage) {
         pdfUri?.let { uri ->
-            renderedPages = pdfBitmapConverter.pdfToBitmaps(
+            val newPages = pdfBitmapConverter.pdfToBitmaps(
                 contentUri = uri,
-                startPage = 0,
-                endPage = 10
+                page = currentPage,
             )
+
+            if (newPages.isNotEmpty()) {
+                renderedPages += newPages
+            }
+        }
+    }
+
+    LaunchedEffect(null) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            if (page % 5 == 4) {
+                currentPage++
+            }
         }
     }
 
@@ -77,11 +100,6 @@ fun PdfViewerScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val pagerState = rememberPagerState(
-                pageCount = {
-                    renderedPages.size
-                }
-            )
             HorizontalPager(
                 state = pagerState,
                 beyondBoundsPageCount = 3,
