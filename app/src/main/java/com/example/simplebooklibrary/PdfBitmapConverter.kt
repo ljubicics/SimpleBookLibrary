@@ -22,6 +22,7 @@ class PdfBitmapConverter(
 ) {
     private var renderer: PdfRenderer? = null
 
+    @Suppress("TooGenericExceptionCaught")
     suspend fun pdfToBitmaps(
         contentUri: Uri,
         page: Int = 0,
