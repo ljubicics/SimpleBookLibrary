@@ -73,6 +73,11 @@ dependencies {
     testImplementation(libs.mockk.base)
     testImplementation(libs.mockk.android)
 
+    //DI
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+
     implementation(libs.coil.compose)
     implementation(libs.splash)
     testImplementation(kotlin("test"))
