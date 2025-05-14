@@ -12,6 +12,9 @@ object KoinInitializer {
 
         androidContext(context)
 
-        modules(appModule)
+        modules(
+            AppModule.module,
+            viewModelModule
+        )
     }
 }
