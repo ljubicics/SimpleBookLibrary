@@ -21,9 +21,12 @@ class PdfViewerViewModel(
     private var currentPage: Int = 0
     private val pagesList = mutableListOf<Bitmap>()
 
+    fun initialize(uri: Uri) {
+        setPdfUri(uri)
+    }
+
     fun handleAction(action: PdfViewerContract.Action) {
         when (action) {
-            is PdfViewerContract.Action.SetPdfUri -> setPdfUri(action.uri)
             is PdfViewerContract.Action.OnPageSwipe -> onPageSwipe(action.pageNumber)
         }
     }
@@ -33,8 +36,7 @@ class PdfViewerViewModel(
         _state.update {
             it.copy(
                 pdfUri = uri,
-
-                )
+            )
         }
         renderPdf()
     }
