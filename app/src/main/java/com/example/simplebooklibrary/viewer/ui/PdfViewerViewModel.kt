@@ -17,22 +17,29 @@ class PdfViewerViewModel(
     private val _state = MutableStateFlow(PdfViewerContract.State())
     val state = _state.asStateFlow()
 
-    private var pageIndex: Int = 0
+    private var batchIndex: Int = 0
     private var currentPage: Int = 0
     private val pagesList = mutableListOf<Bitmap>()
 
-    fun setPdfUri(uri: Uri) {
+    fun handleAction(action: PdfViewerContract.Action) {
+        when (action) {
+            is PdfViewerContract.Action.SetPdfUri -> setPdfUri(action.uri)
+            is PdfViewerContract.Action.OnPageSwipe -> onPageSwipe(action.pageNumber)
+        }
+    }
+
+    private fun setPdfUri(uri: Uri) {
         pagesList.clear()
         _state.update {
             it.copy(
                 pdfUri = uri,
 
-            )
+                )
         }
         renderPdf()
     }
 
-    fun onPageSwipe(pageNumber: Int) {
+    private fun onPageSwipe(pageNumber: Int) {
         if (pageNumber >= currentPage) {
             currentPage++
             if (currentPage % 5 == 4) {
@@ -44,14 +51,14 @@ class PdfViewerViewModel(
 
 
     private fun updatePageIndex() {
-        pageIndex++
+        batchIndex++
     }
 
     private fun renderPdf() {
         viewModelScope.launch {
             pdfBitmapConverter.pdfToBitmaps(
                 contentUri = state.value.pdfUri,
-                page = pageIndex
+                page = batchIndex
             ).let { newPages ->
                 pagesList.addAll(newPages)
                 _state.update {

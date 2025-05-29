@@ -38,14 +38,14 @@ fun PdfViewerScreen(
 
     LaunchedEffect(null) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
-            viewModel.onPageSwipe(pageNumber = page)
+            viewModel.handleAction(PdfViewerContract.Action.OnPageSwipe(pageNumber = page))
         }
     }
 
     val choosePdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        viewModel.setPdfUri(uri = uri ?: Uri.EMPTY)
+        viewModel.handleAction(PdfViewerContract.Action.SetPdfUri(uri = uri ?: Uri.EMPTY))
     }
 
     if (state.pdfUri == Uri.EMPTY) {

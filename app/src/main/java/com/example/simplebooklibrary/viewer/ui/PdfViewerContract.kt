@@ -9,4 +9,9 @@ interface PdfViewerContract {
         val totalPages: Int = 0,
         val pages: List<Bitmap> = emptyList(),
     )
+
+    sealed class Action {
+        data class SetPdfUri(val uri: Uri) : Action()
+        data class OnPageSwipe(val pageNumber: Int) : Action()
+    }
 }
