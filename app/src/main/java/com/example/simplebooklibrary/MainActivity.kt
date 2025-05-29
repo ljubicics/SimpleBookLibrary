@@ -18,14 +18,10 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         setContent {
             SimpleBookLibraryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    PdfViewerScreen(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                    )
-                }
+                MainScreen(
+                    modifier = Modifier.fillMaxSize()
+                )
             }
-
         }
     }
 }

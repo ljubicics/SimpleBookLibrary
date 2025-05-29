@@ -1,4 +1,4 @@
-package com.example.simplebooklibrary
+package com.example.simplebooklibrary.viewer.util
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -17,17 +17,25 @@ private const val READ_MODE = "r"
 private const val BITMAP_X_START_POINT = 0f
 private const val BITMAP_Y_START_POINT = 0f
 
-class PdfBitmapConverter(
-    private val context: Context
-) {
-    private var renderer: PdfRenderer? = null
-    private var bookNumberOfPages: Int = 0
-
-    @Suppress("TooGenericExceptionCaught")
+interface IBitmapConverter {
     suspend fun pdfToBitmaps(
         contentUri: Uri,
         page: Int = 0,
         isDarkModeActive: Boolean = false
+    ): List<Bitmap>
+}
+
+class PdfBitmapConverter(
+    private val context: Context
+) : IBitmapConverter {
+    private var renderer: PdfRenderer? = null
+    private var bookNumberOfPages: Int = 0
+
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun pdfToBitmaps(
+        contentUri: Uri,
+        page: Int,
+        isDarkModeActive: Boolean
     ): List<Bitmap> {
         val startPage = page * 5
 
