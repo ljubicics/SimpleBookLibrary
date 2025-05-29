@@ -19,7 +19,6 @@ A modern Android application for reading PDF books with a clean, Material Design
 ### Key Components
 - `PdfViewerViewModel`: Manages PDF rendering state and loading logic
 - `PdfBitmapConverter`: Handles PDF to bitmap conversion with rendering optimizations
-- `HorizontalPager`: Provides smooth page swiping experience
 
 ## Future Roadmap
 
@@ -47,7 +46,3 @@ The upcoming AI integration will provide:
 
 - Android 7.0 (API level 24) or higher
 - Gradle 7.0+ and Android Gradle Plugin 7.0+
-
-## License
-
-[MIT License](LICENSE)
