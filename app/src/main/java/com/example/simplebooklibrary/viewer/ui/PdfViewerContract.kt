@@ -11,7 +11,6 @@ interface PdfViewerContract {
     )
 
     sealed class Action {
-        data class SetPdfUri(val uri: Uri) : Action()
         data class OnPageSwipe(val pageNumber: Int) : Action()
     }
 }

@@ -1,5 +1,7 @@
 package com.example.simplebooklibrary.navigation
 
+import android.net.Uri
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 sealed class AppDestinations {
@@ -7,7 +9,10 @@ sealed class AppDestinations {
     data object BookDetails : AppDestinations()
 
     @Serializable
-    data object PdfViewer : AppDestinations()
+    data class PdfViewer( val uri: String) : AppDestinations()
+
+    @Serializable
+    data object Library : AppDestinations()
 
     @Serializable
     data object BookList : AppDestinations()

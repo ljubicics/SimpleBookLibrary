@@ -1,4 +1,4 @@
-package com.example.simplebooklibrary.ui.theme
+package com.example.simplebooklibrary.theme
 
 import androidx.compose.ui.graphics.Color
 

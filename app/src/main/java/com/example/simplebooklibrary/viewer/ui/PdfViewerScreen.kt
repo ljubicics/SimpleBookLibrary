@@ -26,6 +26,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PdfViewerScreen(
     modifier: Modifier = Modifier,
+    uri: Uri = Uri.EMPTY,
     viewModel: PdfViewerViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -36,49 +37,31 @@ fun PdfViewerScreen(
         }
     )
 
-    LaunchedEffect(null) {
+    LaunchedEffect(key1 = null) {
+        viewModel.initialize(uri = uri)
+    }
+
+    LaunchedEffect(key1 = null) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             viewModel.handleAction(PdfViewerContract.Action.OnPageSwipe(pageNumber = page))
         }
     }
 
-    val choosePdfLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        viewModel.handleAction(PdfViewerContract.Action.SetPdfUri(uri = uri ?: Uri.EMPTY))
-    }
-
-    if (state.pdfUri == Uri.EMPTY) {
-        Box(
-            modifier = modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Button(
-                onClick = {
-                    choosePdfLauncher.launch("application/pdf")
-                }
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            beyondViewportPageCount = 0,
+        ) { page ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Text("Choose PDF")
-            }
-        }
-    } else {
-        Column(
-            modifier = modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                beyondViewportPageCount = 0,
-            ) { page ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    PdfPage(page = state.pages[page])
-                }
+                PdfPage(page = state.pages[page])
             }
         }
     }
