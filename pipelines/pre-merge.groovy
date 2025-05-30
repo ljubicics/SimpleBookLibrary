@@ -1,3 +1,14 @@
+JENKINS_MACHINE_ID = "android-sbl-slave"
+SUCCESS = "SUCCESS"
+FAILURE = "FAILURE"
+
+QUEUED = "QUEUED"
+COMPLETED = "COMPLETED"
+
+RESULT_SUCESS = 1
+RESULT_NOT_RUN = 0
+RESULT_ERROR = -1
+
 pipeline {
     agent {
         label 'android-sbl-slave'
@@ -5,10 +16,6 @@ pipeline {
 
     environment {
         GRADLE_USER_HOME = "${HOME}/.gradle"
-    }
-
-    tools {
-        jdk 'JDK21'
     }
 
     stages {
@@ -21,14 +28,6 @@ pipeline {
         stage('Grant gradlew execute') {
             steps {
                 sh 'chmod +x ./gradlew'
-            }
-        }
-
-        stage('Cache Gradle') {
-            steps {
-                // Keširanje se u Jenkinsu obično radi pomoću eksternih pluginova poput "Pipeline: Groovy" i "Workspace Cache Plugin",
-                // ali za sad preskačemo ovaj deo ako ne koristiš neki plugin za cache
-                echo 'Gradle cache would go here (plugin required)'
             }
         }
 
