@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        GRADLE_USER_HOME = "${WORKSPACE}/.gradle"
-        ANDROID_HOME = "/opt/android-sdk"
-        PATH = "${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${PATH}"
-    }
-
     options {
         timeout(time: 30, unit: 'MINUTES')
         ansiColor('xterm')
