@@ -28,7 +28,7 @@ pipeline {
             }
         }
 
-        stage('Code Quality: Detekt') {
+        stage('Detekt') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh './gradlew detekt --stacktrace'
