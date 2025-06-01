@@ -10,9 +10,7 @@ RESULT_NOT_RUN = 0
 RESULT_ERROR = -1
 
 pipeline {
-    agent {
-        label 'master'
-    }
+    agent any
 
     environment {
         GRADLE_USER_HOME = "${HOME}/.gradle"
