@@ -11,7 +11,7 @@ RESULT_ERROR = -1
 
 pipeline {
     agent {
-        label 'android-sbl-slave'
+        label 'android-pre-merge-agent'
     }
 
     environment {
