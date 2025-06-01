@@ -1,4 +1,4 @@
-JENKINS_MACHINE_ID = "android-sbl-slave"
+JENKINS_MACHINE_ID = "android-pre-merge-agent"
 SUCCESS = "SUCCESS"
 FAILURE = "FAILURE"
 
