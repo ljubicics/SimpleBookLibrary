@@ -11,7 +11,7 @@ RESULT_ERROR = -1
 
 pipeline {
     agent {
-        label 'android-pre-merge-agent'
+        label 'master'
     }
 
     environment {
