@@ -1,2 +1,3 @@
 /.github/CODEOWNERS @ljubicics
-/.github/workflows/pre_merge.yml @ljubicics
+/pipelines/pre-merge.groovy @ljubicics
+/quality/detekt_config.yml @ljubicics
